@@ -26,7 +26,8 @@ int get_register_value(int index);
 int get_register_value_by_name(const char *name);
 int get_register_index_by_name(const char *name);
 void print_register_table();
-void set_register(int index, int value);
+void set_register_by_index(int index, int value);
+void set_register_by_name(const char *name, int value);
 
 // Functions for program counter
 int get_pc();

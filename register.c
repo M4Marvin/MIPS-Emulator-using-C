@@ -149,7 +149,7 @@ int get_register_value_by_name(const char *name)
  * @param index The index of the register entry.
  * @param value The value to be set.
  */
-void set_register(int index, int value)
+void set_register_by_index(int index, int value)
 {
     if (index < 0 || index >= REGISTER_TABLE_SIZE)
     {
@@ -167,6 +167,50 @@ void set_register(int index, int value)
         // Store the value
         REGISTER_TABLE.registers[index]->value = value;
     }
+}
+
+/**
+ * Set the register entry by name. Stores negative values as twos complement.
+ * @param name The name of the register entry.
+ * @param value The value to be set.
+ */
+void set_register_by_name(const char *name, int value)
+{
+    for (int i = 0; i < REGISTER_TABLE_SIZE; i++)
+    {
+        if (strcmp(REGISTER_TABLE.registers[i]->name, name) == 0)
+        {
+            // Check if the value is negative
+            if (value < 0)
+            {
+                // Convert the value to twos complement (32-bit)
+                value = ~value;
+                value = value + 1;
+            }
+            // Store the value
+            REGISTER_TABLE.registers[i]->value = value;
+            return;
+        }
+    }
+
+    for (int i = 0; i < SPECIAL_REGISTER_TABLE_SIZE; i++)
+    {
+        if (strcmp(REGISTER_TABLE.specialRegisters[i]->name, name) == 0)
+        {
+            // Check if the value is negative
+            if (value < 0)
+            {
+                // Convert the value to twos complement (32-bit)
+                value = ~value;
+                value = value + 1;
+            }
+            // Store the value
+            REGISTER_TABLE.specialRegisters[i]->value = value;
+            return;
+        }
+    }
+
+    printf("Invalid register name: %s\n", name);
 }
 
 /**
