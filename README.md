@@ -1,6 +1,6 @@
 # MIPS-Emulator-using-C
 
-Emulator for MIPS-32/64-bit architecture using C. It has limited functionality, it can currently excecute the folowing instructions:
+Emulator for MIPS-32-bit architecture using C. It has limited functionality, it can currently excecute the folowing instructions:
 
 1. nop
 2. add
@@ -15,7 +15,7 @@ Emulator for MIPS-32/64-bit architecture using C. It has limited functionality, 
 
 To run the emulator, you need excecute the following command:
 
-```
+```powershell
 gcc -o mips_emulator mips_emulator.c
 ./mips-emulator <input_file>
 ```
