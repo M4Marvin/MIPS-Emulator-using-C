@@ -3,5 +3,5 @@
  * This module is responsible for executing the opcodes generated and stored by assembler modules.
  */
 #include "excecute.h"
-#include "opcode_table.h"
+#include "instruction.h"
 #include "register.h"

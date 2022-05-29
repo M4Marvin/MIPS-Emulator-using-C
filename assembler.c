@@ -4,4 +4,4 @@
  */
 #include "assembler.h"
 #include "register.h"
-#include "opcode_table.h"
+#include "instruction.h"
