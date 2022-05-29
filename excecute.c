@@ -4,4 +4,4 @@
  */
 #include "excecute.h"
 #include "opcode_table.h"
-#include "symbol_table.h"
+#include "register.h"

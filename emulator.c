@@ -6,6 +6,6 @@
 
 #include "emulator.h"
 #include "opcode_table.h"
-#include "symbol_table.h"
+#include "register.h"
 #include "excecute.h"
 #include "assembler.h"

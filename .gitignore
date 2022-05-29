@@ -53,3 +53,11 @@ dkms.conf
 
 # Input files
 input/*
+
+# Clion files
+.idea/
+*.iml
+.vscode/
+cmake-build-debug/
+CMakeLists.txt
+
