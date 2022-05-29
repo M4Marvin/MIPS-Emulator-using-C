@@ -28,6 +28,7 @@ int get_register_index_by_name(const char *name);
 void print_register_table();
 void set_register(int index, int value);
 
+// Functions for program counter
 int get_pc();
 void set_pc(int value);
 void increment_pc();

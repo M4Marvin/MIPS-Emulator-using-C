@@ -51,4 +51,24 @@ void test_register()
 
     // Print the register table
     print_register_table();
+
+    // Testing the program counter functions
+    printf("\n\nTesting the program counter functions:\n");
+    printf("The program counter is: 0x%08x\n", get_pc());
+    printf("Incrementing the program counter by 1:\n");
+    increment_pc();
+    printf("The program counter is: 0x%08x\n", get_pc());
+    printf("Incrementing the program counter by 1:\n");
+    increment_pc();
+    printf("The program counter is: 0x%08x\n", get_pc());
+
+    printf("\n\nTesting the jump program counter functions:\n");
+    printf("The program counter is: 0x%08x\n", get_pc());
+    printf("Jumping the program counter by %d instructions:\n", 5);
+    jump_pc(5);
+    printf("The program counter is: 0x%08x\n", get_pc());
+
+    printf("\n\nSetting pc to %dth instruction:\n", 4);
+    set_pc(4);
+    printf("The program counter is: 0x%08x\n", get_pc());
 }

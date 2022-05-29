@@ -184,7 +184,7 @@ int get_pc()
  */
 void set_pc(int value)
 {
-    REGISTER_TABLE.specialRegisters[0]->value = INIT_PC + value;
+    REGISTER_TABLE.specialRegisters[0]->value = INIT_PC + value * 4;
 }
 
 /**
