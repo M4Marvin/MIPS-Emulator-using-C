@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "instruction.h"
 
@@ -38,10 +39,16 @@ void usage()
 
 void test_instruction()
 {
-    printf("test_instruction\n");
-
-    char *filename = "data/instructions.txt";
+    char *filename = "instructions.txt";
 
     load_instruction_table(filename);
     print_instruction_table();
+
+    add_instruction("add", 'R', 0, 0);
+
+    // Test getter functions. (addi)
+    printf("addi: %c, %d, %d\n",
+           get_instruction_type_by_name("addi"),
+           get_instruction_funct_by_name("addi"),
+           get_instruction_opcode_by_name("addi"));
 }

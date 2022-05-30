@@ -5,7 +5,7 @@
  */
 
 #include "emulator.h"
-#include "opcode_table.h"
+#include "instruction.h"
 #include "register.h"
-#include "excecute.h"
+#include "execute.h"
 #include "assembler.h"

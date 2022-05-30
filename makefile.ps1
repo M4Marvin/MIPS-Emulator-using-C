@@ -1,2 +1,2 @@
-gcc main.c register.c opcode_table.c assembler.c excecute.c emulator.c -Wall -o emulator.exe 
-./emulator.exe
+gcc main.c register.c instruction.c assembler.c execute.c emulator.c -Wall -o test1.exe 
+./test1.exe
