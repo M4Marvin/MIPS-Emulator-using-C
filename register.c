@@ -145,6 +145,23 @@ int get_register_value_by_name(const char *name)
 }
 
 /**
+ * Get the register index by name.
+ * @param name The name of the register entry.
+ */
+int get_register_index_by_name(const char *name)
+{
+    for (int i = 0; i < REGISTER_TABLE_SIZE; i++)
+    {
+        if (strcmp(REGISTER_TABLE.registers[i]->name, name) == 0)
+        {
+            return i;
+        }
+    }
+    printf("Invalid register name: %s\n", name);
+    return -1;
+}
+
+/**
  * Set the register entry by index. Stores negative values as twos complement.
  * @param index The index of the register entry.
  * @param value The value to be set.
