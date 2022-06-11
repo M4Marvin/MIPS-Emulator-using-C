@@ -87,14 +87,12 @@ void print_instruction_table()
 {
     printf("Instruction table:\n");
     for (int i = 0; i < instruction_table.size; i++)
-    {
         printf("%2d. %5s %c 0x%02x 0x%02x\n",
                i + 1,
                instruction_table.instructions[i].name,
                instruction_table.instructions[i].type,
                instruction_table.instructions[i].funct,
                instruction_table.instructions[i].opcode);
-    }
 }
 
 /**
@@ -153,13 +151,11 @@ void store_instruction_table(char *filename)
     // The format of the file is:
     // <name> <description> <type> <funct> <opcode>
     for (int i = 0; i < instruction_table.size; i++)
-    {
         fprintf(file, "%s %c %d %d\n",
                 instruction_table.instructions[i].name,
                 instruction_table.instructions[i].type,
                 instruction_table.instructions[i].opcode,
                 instruction_table.instructions[i].funct);
-    }
 
     // Close the file.
     fclose(file);
@@ -168,35 +164,35 @@ void store_instruction_table(char *filename)
 char get_instruction_type_by_name(char *name)
 {
     for (int i = 0; i < instruction_table.size; i++)
-    {
         if (strcmpi(instruction_table.instructions[i].name, name) == 0)
-        {
             return instruction_table.instructions[i].type;
-        }
-    }
+
     return '\0';
 }
 
 uint8_t get_instruction_funct_by_name(char *name)
 {
     for (int i = 0; i < instruction_table.size; i++)
-    {
         if (strcmpi(instruction_table.instructions[i].name, name) == 0)
-        {
             return instruction_table.instructions[i].funct;
-        }
-    }
+
     return -1;
 }
 
 uint8_t get_instruction_opcode_by_name(char *name)
 {
     for (int i = 0; i < instruction_table.size; i++)
-    {
         if (strcmpi(instruction_table.instructions[i].name, name) == 0)
-        {
             return instruction_table.instructions[i].opcode;
-        }
-    }
+
+    return -1;
+}
+
+int get_instruction_index(char *name)
+{
+    for (int i = 0; i < instruction_table.size; i++)
+        if (strcmpi(instruction_table.instructions[i].name, name) == 0)
+            return i;
+
     return -1;
 }

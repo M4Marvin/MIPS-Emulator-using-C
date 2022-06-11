@@ -20,5 +20,6 @@ void store_instruction_table(char *filename);
 char get_instruction_type_by_name(char *name);
 uint8_t get_instruction_funct_by_name(char *name);
 uint8_t get_instruction_opcode_by_name(char *name);
+int get_instruction_index(char *name);
 
 #endif // INSTRUCTION_H

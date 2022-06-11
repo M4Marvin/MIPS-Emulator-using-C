@@ -54,13 +54,10 @@ void load_instruction_data(char *filename)
 void print_instruction_data()
 {
     printf("Instruction data:\n");
+
     for (int i = 0; i < MAX_NUM_INSTRUCTIONS; i++)
-    {
         if (instruction_data[i] != NULL)
-        {
             printf("%s\n", instruction_data[i]);
-        }
-    }
 }
 
 /**
@@ -71,9 +68,7 @@ void print_instruction_data()
 void init_assembler(char *instructions_data, char *asm_file)
 {
     for (int i = 0; i < MAX_NUM_INSTRUCTIONS; i++)
-    {
         bytecode[i] = 0;
-    }
 
     load_instruction_data(asm_file);
 
@@ -93,9 +88,11 @@ void assemble()
 {
     // Get labels.
     for (int i = 0; i < instruction_count; i++)
-        if (instruction_data[i] != NULL) {
+        if (instruction_data[i] != NULL)
+        {
             char *label = get_label(instruction_data[i]);
-            if (label != NULL) {
+            if (label != NULL)
+            {
                 label_name[label_count] = malloc(strlen(label) + 1);
                 strcpy(label_name[label_count], label);
                 label_index[label_count] = i;
@@ -132,15 +129,11 @@ uint32_t assemble_instruction(char *instruction, int line_number)
 
     // Check if the instruction is a comment.
     if (token[0] == '#')
-    {
         return 0;
-    }
 
     // Check if the instruction is a blank line.
     if (token == NULL)
-    {
         return 0;
-    }
 
     // Check if the instruction has a label.
     if (token[strlen(token) - 1] == ':')
@@ -148,35 +141,48 @@ uint32_t assemble_instruction(char *instruction, int line_number)
         token = strtok(NULL, delim);
         // Check if the remaining instruction is a blank line.
         if (token == NULL)
-        {
             return 0;
-        }
     }
 
-    // Get the opcode.
+    // Check if instruction list contains the instruction.
+    if (get_instruction_index(token) == -1)
+    {
+        printf("Error: Instruction %s not found.\n", token);
+        exit(1);
+    }
+
+    // Create a temporary bytecode variable.
+    int32_t tempBytecode = 0;
+
+    // Get the opcode and  adding it to the bytecode.
     opcode = get_instruction_opcode_by_name(token);
+    tempBytecode = opcode << 26;
 
     // R - type instructions.
     if (opcode == 0x0)
     {
+        // Get function code and adding it to the bytecode.
         funct = get_instruction_funct_by_name(token);
+        tempBytecode |= (funct << 0);
 
         // Check if the instruction is jalr or jr.
         if (funct == 0x8 || funct == 0x9)
         {
+            // Get the source register and destination address.
             uint32_t rs = 31;
             uint32_t address = get_register_index_by_name(strtok(NULL, delim));
-            // Check if the instruction is jalr or jr.
+
+            // Check if the instruction is jr.
             if (funct == 0x8)
-            {
                 rs = 0;
-            }
-            return (opcode << 26) | (address << 21) | (rs << 11) | (funct << 0);
+
+            tempBytecode |= (address << 21) | (rs << 11);
         }
 
         // Check if the instruction is sll or srl.
-        if (funct == 0x0 || funct == 0x2)
+        else if (funct == 0x0 || funct == 0x2)
         {
+            // Get the source register, destination register and shift amount.
             token = strtok(NULL, delim);
             uint32_t rd = get_register_index_by_name(token);
             token = strtok(NULL, delim);
@@ -185,27 +191,30 @@ uint32_t assemble_instruction(char *instruction, int line_number)
             uint32_t shamt = atoi(token);
             // check if shamt is negative.
             if (shamt < 0)
-            {
                 shamt = 0x20 + shamt;
-            }
-            return (opcode << 26) | (rt << 16) | (rd << 11) | (shamt << 6) | (funct << 0);
+
+            // Add the register values and shift amount to the bytecode.
+            tempBytecode |= (rt << 16) | (rd << 11) | (shamt << 6);
         }
 
         // Check if the instruction is one of add, sub, div, nor, xor, or.
-        if (funct == 0x20 || funct == 0x24 || funct == 0x25 || funct == 0x26 || funct == 0x27)
+        else if (funct == 0x20 || funct == 0x24 || funct == 0x25 || funct == 0x26 || funct == 0x27)
         {
+            // Get the register values.
             token = strtok(NULL, delim);
             uint32_t rd = get_register_index_by_name(token);
             token = strtok(NULL, delim);
             uint32_t rs = get_register_index_by_name(token);
             token = strtok(NULL, delim);
             uint32_t rt = get_register_index_by_name(token);
-            return (opcode << 26) | (rd << 11) | (rs << 21) | (rt << 16) | (funct << 0);
+
+            // Add the register values to the bytecode.
+            tempBytecode |= (rs << 21) | (rt << 16) | (rd << 11);
         }
     }
 
     // I-type instruction
-    if ((opcode >= 0x4 && opcode <= 0x8) || opcode == 0xA || opcode == 0xC || opcode == 0xE)
+    else if ((opcode >= 0x4 && opcode <= 0x8) || opcode == 0xA || opcode == 0xC || opcode == 0xE)
     {
         uint32_t rs, rt;
         uint16_t imm;
@@ -216,7 +225,11 @@ uint32_t assemble_instruction(char *instruction, int line_number)
         // Check if the instruction is beq or bne.
         if (opcode == 0x4 || opcode == 0x5)
         {
+            // Get the register value and adding it to the bytecode.
             rt = get_register_index_by_name(token);
+            tempBytecode |= (rs << 21) | (rt << 16);
+
+            // Calculate the offset of branching.
             token = strtok(NULL, delim);
             uint32_t jump_to = get_label_index_by_name(token);
             uint32_t jump_from = line_number;
@@ -224,52 +237,54 @@ uint32_t assemble_instruction(char *instruction, int line_number)
 
             // Check if offset is negative, if so then take 2's complement.
             if (offset < 0)
-            {
                 offset = ~offset + 1;
-            }
 
-            return (opcode << 26) | (rs << 21) | (rt << 16) | (offset << 0);
+            // Add the offset to the bytecode.
+            tempBytecode |= offset;
         }
 
         // Check if the instruction is blez or bgtz.
-        if (opcode == 0x6 || opcode == 0x7)
+        else if (opcode == 0x6 || opcode == 0x7)
         {
+            // Calculating the offset and adding it to the bytecode.
             uint32_t jump_to = get_label_index_by_name(token);
             uint32_t jump_from = line_number;
             uint16_t offset = jump_to - jump_from - 1;
 
             // Check if offset is negative, if so then take 2's complement.
             if (offset < 0)
-            {
                 offset = ~offset + 1;
-            }
 
-            return (opcode << 26) | (rs << 21) | (offset << 0);
+            tempBytecode |= (rs << 21) | (offset << 0);
         }
 
         // Remaining I-type instructions. (addi, andi, subi, ori)
         rt = get_register_index_by_name(token);
         token = strtok(NULL, delim);
         imm = atoi(token);
+
         // Check if imm is negative. If so, get the two's complement.
         if (imm < 0)
-        {
-            imm = ~imm;
-            imm = imm + 1;
-        }
-        return (opcode << 26) | (rt << 21) | (rs << 16) | imm;
+            imm = ~imm + 1;
+
+        tempBytecode |= (rs << 21) | (rt << 16) | (imm << 0);
     }
 
     // J-type instruction
-    if (opcode == 0x2 || opcode == 0x3)
+    else if (opcode == 0x2 || opcode == 0x3)
     {
         token = strtok(NULL, delim);
         uint32_t address = get_label_index_by_name(token);
+
         // calculate the address to jump to.
         address = INIT_PC + address * 4;
-        return (opcode << 26) | ((address >> 2) & 0x3FFFFF);
+
+        // Add the address to the bytecode.
+        tempBytecode |= ((address >> 2) & 0x3FFFFF);
     }
-    return 0;
+
+    printf("%08X\n", tempBytecode);
+    return tempBytecode;
 }
 
 /*
@@ -306,13 +321,13 @@ int get_label_index_by_name(char *label)
 }
 
 /**
-* Print the bytecode.
-*/
+ * Print the bytecode.
+ */
 
 void print_bytecode()
 {
     for (int i = 0; i < instruction_count; i++)
     {
-        printf("0x%08x   0x%08x  %s\n", INIT_PC+ i*4, bytecode[i], instruction_data[i]);
+        printf("0x%08x   0x%08x  %s\n", INIT_PC + i * 4, bytecode[i], instruction_data[i]);
     }
 }

@@ -18,11 +18,10 @@ void usage()
 
 void test_assembler()
 {
-    char *asm_file = "eth_mult_procedure.asm";
+    char *asm_file = "simple_add.asm";
     char *instructions_data = "instructions.txt";
 
     init_assembler(instructions_data, asm_file);
 
     assemble();
-
 }

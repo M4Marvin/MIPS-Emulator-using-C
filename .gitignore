@@ -53,6 +53,7 @@ dkms.conf
 
 # Input files
 input/*
+*.asm
 
 # Clion files
 .idea/
