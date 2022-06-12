@@ -65,14 +65,14 @@ void init_register_table()
 {
     for (int i = 0; i < REGISTER_TABLE_SIZE; i++)
     {
-        REGISTER_TABLE.registers[i] = malloc(sizeof(RegisterEntry));
+        REGISTER_TABLE.registers[i] = (RegisterEntry *)malloc(sizeof(RegisterEntry));
         REGISTER_TABLE.registers[i]->name = REGISTER_NAMES[i];
         REGISTER_TABLE.registers[i]->value = 0;
     }
 
     for (int i = 0; i < SPECIAL_REGISTER_TABLE_SIZE; i++)
     {
-        REGISTER_TABLE.specialRegisters[i] = malloc(sizeof(RegisterEntry));
+        REGISTER_TABLE.specialRegisters[i] = (RegisterEntry *)malloc(sizeof(RegisterEntry));
         REGISTER_TABLE.specialRegisters[i]->name = SPECIAL_REGISTER_NAMES[i];
         REGISTER_TABLE.specialRegisters[i]->value = 0;
     }

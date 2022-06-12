@@ -33,7 +33,7 @@ InstructionTable instruction_table = {NULL, 0};
  * Load the instruction table from a file.
  * @param filename The name of the file containing the instruction table.
  */
-void load_instruction_table(char *filename)
+void load_instruction_table(const char *filename)
 {
     FILE *file = fopen(filename, "r");
     if (file == NULL)
@@ -47,7 +47,7 @@ void load_instruction_table(char *filename)
     fscanf(file, "%d\n", &num_instructions);
 
     // Allocate memory for the instructions.
-    instruction_table.instructions = malloc(num_instructions * sizeof(Instruction));
+    instruction_table.instructions = (Instruction *)malloc(num_instructions * sizeof(Instruction));
     if (instruction_table.instructions == NULL)
     {
         fprintf(stderr, "Error: Could not allocate memory for instructions.\n");
@@ -66,7 +66,7 @@ void load_instruction_table(char *filename)
         // Reading values from a line.
         fscanf(file, "%s %c %d %d\n", name, &type, &opcode, &funct);
         // Store the values in the instruction.
-        instruction_table.instructions[i].name = malloc(strlen(name) + 1);
+        instruction_table.instructions[i].name = (char *)malloc(strlen(name) + 1);
         strcpy(instruction_table.instructions[i].name, name);
         instruction_table.instructions[i].type = type;
         instruction_table.instructions[i].funct = funct;
@@ -105,7 +105,7 @@ void print_instruction_table()
 void add_instruction(char *name, char type, uint8_t funct, uint8_t opcode)
 {
     // Allocate memory for the instruction.
-    Instruction *instruction = malloc(sizeof(Instruction));
+    Instruction *instruction = (Instruction *)malloc(sizeof(Instruction));
     if (instruction == NULL)
     {
         fprintf(stderr, "Error: Could not allocate memory for instruction.\n");
@@ -113,14 +113,14 @@ void add_instruction(char *name, char type, uint8_t funct, uint8_t opcode)
     }
 
     // Store the values in the instruction.
-    instruction->name = malloc(strlen(name) + 1);
+    instruction->name = (char *)malloc(strlen(name) + 1);
     strcpy(instruction->name, name);
     instruction->type = type;
     instruction->funct = funct;
     instruction->opcode = opcode;
 
     // Add the instruction to the instruction table.
-    instruction_table.instructions = realloc(instruction_table.instructions,
+    instruction_table.instructions = (Instruction *)realloc(instruction_table.instructions,
                                              (instruction_table.size + 1) * sizeof(Instruction));
     if (instruction_table.instructions == NULL)
     {

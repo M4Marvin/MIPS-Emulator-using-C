@@ -11,4 +11,3 @@ skipadd: srl $a0 $a0 1
 sll $a1 $a1 1
 bne $a0 $zero loop
 jr $ra
-

@@ -18,8 +18,8 @@ void usage()
 
 void test_assembler()
 {
-    char *asm_file = "simple_add.asm";
-    char *instructions_data = "instructions.txt";
+    const char *asm_file = "simple_add.asm";
+    const char *instructions_data = "instructions.txt";
 
     init_assembler(instructions_data, asm_file);
 

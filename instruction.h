@@ -14,7 +14,7 @@ typedef struct InstructionTable InstructionTable;
 extern InstructionTable instruction_table;
 
 void print_instruction_table();
-void load_instruction_table(char *filename);
+void load_instruction_table(const char *filename);
 void add_instruction(char *name, char type, uint8_t funct, uint8_t opcode);
 void store_instruction_table(char *filename);
 char get_instruction_type_by_name(char *name);

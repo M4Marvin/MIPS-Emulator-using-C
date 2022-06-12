@@ -9,9 +9,9 @@
 extern uint32_t bytecode[MAX_NUM_INSTRUCTIONS];
 extern char *instruction_data[MAX_NUM_INSTRUCTIONS];
 
-void load_instruction_data(char *filename);
+void load_instruction_data(const char *filename);
 void print_instruction_data();
-void init_assembler(char *instructions_data, char *asm_file);
+void init_assembler(const char *instructions_data, const char *asm_file);
 uint32_t assemble_instruction(char *instruction, int line_number);
 void print_bytecode();
 void assemble();

@@ -25,7 +25,7 @@ int label_count;
  * Loads the instructions from an assembly file.
  * @param filename Name of the file to load the data from
  */
-void load_instruction_data(char *filename)
+void load_instruction_data(const char *filename)
 {
     FILE *file = fopen(filename, "r");
     if (file == NULL)
@@ -40,7 +40,7 @@ void load_instruction_data(char *filename)
     {
         // Remove newline character.
         line[strcspn(line, "\n")] = 0;
-        instruction_data[line_number] = malloc(strlen(line) + 1);
+        instruction_data[line_number] = (char *)malloc(strlen(line) + 1);
         strcpy(instruction_data[line_number], line);
         line_number++;
     }
@@ -65,7 +65,7 @@ void print_instruction_data()
  * @param instructions_data Filename of the file containing the instructions list
  * @param asm_file Filename of the file containing the assembly code
  */
-void init_assembler(char *instructions_data, char *asm_file)
+void init_assembler(const char *instructions_data, const char *asm_file)
 {
     for (int i = 0; i < MAX_NUM_INSTRUCTIONS; i++)
         bytecode[i] = 0;
@@ -93,7 +93,7 @@ void assemble()
             char *label = get_label(instruction_data[i]);
             if (label != NULL)
             {
-                label_name[label_count] = malloc(strlen(label) + 1);
+                label_name[label_count] = (char *)malloc(strlen(label) + 1);
                 strcpy(label_name[label_count], label);
                 label_index[label_count] = i;
                 label_count++;
@@ -117,7 +117,7 @@ void assemble()
 uint32_t assemble_instruction(char *instruction, int line_number)
 {
     char *token;
-    char *delim = " ,";
+    char delim[] = " ,";
     uint32_t opcode = 0;
     uint32_t funct = 0;
 
@@ -142,6 +142,11 @@ uint32_t assemble_instruction(char *instruction, int line_number)
         // Check if the remaining instruction is a blank line.
         if (token == NULL)
             return 0;
+    }
+    // Check if instruction is nop.
+    if (strcmp(token, "nop") == 0)
+    {
+        return 0;
     }
 
     // Check if instruction list contains the instruction.
@@ -259,15 +264,18 @@ uint32_t assemble_instruction(char *instruction, int line_number)
         }
 
         // Remaining I-type instructions. (addi, andi, subi, ori)
-        rt = get_register_index_by_name(token);
-        token = strtok(NULL, delim);
-        imm = atoi(token);
+        else
+        {
+            rt = get_register_index_by_name(token);
+            token = strtok(NULL, delim);
+            imm = atoi(token);
 
-        // Check if imm is negative. If so, get the two's complement.
-        if (imm < 0)
-            imm = ~imm + 1;
+            // Check if imm is negative. If so, get the two's complement.
+            if (imm < 0)
+                imm = ~imm + 1;
 
-        tempBytecode |= (rs << 21) | (rt << 16) | (imm << 0);
+            tempBytecode |= (rs << 16) | (rt << 21) | (imm << 0);
+        }
     }
 
     // J-type instruction
@@ -282,8 +290,6 @@ uint32_t assemble_instruction(char *instruction, int line_number)
         // Add the address to the bytecode.
         tempBytecode |= ((address >> 2) & 0x3FFFFF);
     }
-
-    printf("%08X\n", tempBytecode);
     return tempBytecode;
 }
 
@@ -293,9 +299,11 @@ uint32_t assemble_instruction(char *instruction, int line_number)
 char *get_label(char *instruction)
 {
     char *token;
-    char *delim = " ";
+    char delim[] = " ";
     char *instruction_copy = strdup(instruction);
     token = strtok(instruction_copy, delim);
+    if (token == NULL)
+        return NULL;
     if (token[strlen(token) - 1] == ':')
     {
         // Remove the colon from the label.
